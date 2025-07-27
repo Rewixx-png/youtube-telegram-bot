@@ -123,6 +123,3 @@ python3 bot.py
 ```
 
 Your bot is now fully operational!
-```
-
----
