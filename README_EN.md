@@ -12,7 +12,6 @@ This bot allows Telegram users to download videos from YouTube, bypassing the st
 - ✅ **Automatic Merging:** Downloads video and audio streams separately and automatically merges them into a single MP4 file.
 - ✅ **Video Thumbnails:** Displays the video thumbnail when selecting quality and attaches it to the final sent video file.
 - ✅ **Interactive UI:** User-friendly inline keyboard with a two-column layout for quality selection.
-- ✅ **Progress Bar:** Shows a real-time progress bar while the video is downloading.
 
 ---
 
