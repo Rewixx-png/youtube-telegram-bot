@@ -1,0 +1,4 @@
+# requirements.txt
+aiogram
+pytube
+pydantic-settings
