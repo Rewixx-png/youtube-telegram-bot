@@ -26,7 +26,7 @@
 ### Шаг 1: Клонирование репозитория
 
 ```bash
-git clone https://github.com/ТВОЙ_НИК/youtube-telegram-bot.git
+git clone https://github.com/Rewixx-png/youtube-telegram-bot.git
 cd youtube-telegram-bot
 ```
 
