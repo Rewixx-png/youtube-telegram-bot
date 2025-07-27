@@ -1,3 +1,6 @@
+[Русская версия](README.md)
+
+---
 # YouTube Downloader Telegram Bot 🚀
 
 This bot allows Telegram users to download videos from YouTube, bypassing the standard 50 MB file size limit of the Telegram Bot API. It utilizes a self-hosted Telegram Bot API server and the powerful `yt-dlp` library for maximum reliability and functionality.
