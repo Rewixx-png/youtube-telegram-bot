@@ -58,8 +58,6 @@ class ProgressLogger:
             text = f"✅ Скачивание завершено. Начинаю обработку..."
             self._edit_caption_threadsafe(text)
 
-# (остальной код остается без изменений)
-
 def get_emoji_for_resolution(resolution):
     if resolution >= 2160: return "💎"
     elif resolution >= 1440: return "🌟"
@@ -198,12 +196,14 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
         thumbnail_input = FSInputFile(thumbnail_path) if thumbnail_path else None
         video_file = FSInputFile(video_path)
         
+        # --- ИСПРАВЛЕНИЕ ОШИБКИ ТАЙМ-АУТА ---
         await bot.send_video(
             chat_id=callback.message.chat.id,
             video=video_file, 
             thumbnail=thumbnail_input, 
             supports_streaming=True, 
-            caption=title
+            caption=title,
+            request_timeout=3600  # Увеличиваем тайм-аут до 1 часа
         )
         
         await callback.message.delete()
