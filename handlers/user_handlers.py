@@ -96,11 +96,16 @@ async def cmd_start(message: types.Message):
 
 @user_router.message(F.text.contains("youtu"))
 async def get_video_formats_handler(message: types.Message):
-    clean_url = message.text.split("?")[0]
-    video_id = get_video_id(clean_url)
+    # --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
+    # Сначала извлекаем ID из полного URL, который прислал пользователь
+    video_id = get_video_id(message.text)
     if not video_id:
         await message.answer("Не удалось извлечь ID видео из ссылки. Пожалуйста, отправьте корректную ссылку на YouTube.")
         return
+    
+    # Теперь формируем "чистую" каноническую ссылку для yt-dlp
+    clean_url = f"https://www.youtube.com/watch?v={video_id}"
+    # -----------------------
         
     status_message = await message.answer("Анализирую доступные форматы...")
     

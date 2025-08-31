@@ -26,3 +26,10 @@ __pycache__/
 venv/
 .venv/
 *.deb
+telegram-bot-api/
+venv/
+__pycache__/
+*.pyc
+bot.log
+token.txt
+cookies.txt
