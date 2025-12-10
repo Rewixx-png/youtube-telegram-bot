@@ -9,7 +9,8 @@ from aiogram.enums import ParseMode
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
 
-from handlers.user_handlers import user_router
+# Импорт новых роутеров
+from handlers import start, video_selection, download
 from config_reader import BOT_TOKEN
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,8 @@ async def main():
     )
     logger.info("Starting bot with Local Bot API Server...")
 
+    # Если API запущен через Docker Compose и прокинут на хост, используем localhost:8081
+    # Если ты хочешь использовать публичный домен с HTTPS, поменяй URL здесь.
     local_server = TelegramAPIServer.from_base("http://127.0.0.1:8081")
 
     session = AiohttpSession(api=local_server)
@@ -39,13 +42,14 @@ async def main():
     logger.info(f"!!! FINAL CHECK: Bot is configured to use API base URL: {actual_base_url} !!!")
     
     dp = Dispatcher()
-    dp.include_router(user_router)
+    
+    # Регистрируем роутеры
+    dp.include_router(start.router)
+    dp.include_router(video_selection.router)
+    dp.include_router(download.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
-    
-    # --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
     await dp.start_polling(bot, polling_timeout=60)
-    # -----------------------
 
 if __name__ == "__main__":
     try:

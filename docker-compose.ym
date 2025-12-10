@@ -1,0 +1,42 @@
+services:
+  # Локальный сервер Telegram Bot API
+  telegram-bot-api:
+    image: aiogram/telegram-bot-api:latest
+    container_name: telegram-bot-api
+    restart: unless-stopped
+    environment:
+      # Замени значения ниже на свои API_ID и API_HASH (с my.telegram.org)
+      - TELEGRAM_API_ID=123456
+      - TELEGRAM_API_HASH=abcdef1234567890
+      - TELEGRAM_LOCAL=true
+      - TELEGRAM_HTTP_PORT=8081
+    volumes:
+      # Папка для временного хранения файлов (важно, если бот и сервер на одной машине)
+      - ./telegram-bot-api-data:/var/lib/telegram-bot-api
+    ports:
+      - "8081:8081" # Прокидываем наружу для локальных тестов (или убери, если через nginx)
+
+  # Nginx для проксирования запросов и SSL
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - telegram-bot-api
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  # Certbot для получения SSL сертификатов
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
