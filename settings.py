@@ -6,13 +6,13 @@ class Settings(BaseSettings):
     # Telegram Bot
     bot_token: str
     
-    # Telegram API Server (ID/Hash для Docker'а, но пусть будут и тут)
-    telegram_api_id: int
+    # Telegram API Server
+    telegram_api_id: str | int
     telegram_api_hash: str
     
     # Domain & SSL
     api_domain: str
-    admin_email: str
+    admin_email: str = "admin@localhost"
     
     # Paths
     base_dir: Path = Path(__file__).parent
@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = 'utf-8'
-        # Игнорируем лишние переменные, если они есть
         extra = "ignore"
 
 settings = Settings()

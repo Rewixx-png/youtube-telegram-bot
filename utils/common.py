@@ -2,11 +2,14 @@
 import asyncio
 import time
 import re
-from pathlib import Path
 from aiogram import Bot, types
+from settings import settings
 
-# Путь к кукам (поднимаемся на два уровня вверх от utils)
-COOKIES_PATH = Path(__file__).parent.parent / 'cookies.txt'
+# --- ВОТ ЭТА ФУНКЦИЯ, КОТОРОЙ НЕ ХВАТАЛО ---
+def get_cookies_path():
+    """Возвращает путь к файлу cookies.txt как строку."""
+    return str(settings.cookies_path)
+# -------------------------------------------
 
 class ProgressLogger:
     def __init__(self, bot: Bot, message: types.Message, loop: asyncio.AbstractEventLoop):
@@ -28,7 +31,6 @@ class ProgressLogger:
     def progress_hook(self, d):
         if d['status'] == 'downloading':
             current_time = time.time()
-            # Обновляем не чаще раза в 2.5 секунды, чтобы не словить FloodWait
             if current_time - self.last_update_time < 2.5:
                 return
             self.last_update_time = current_time
