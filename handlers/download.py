@@ -8,7 +8,7 @@ from aiogram import Router, F, Bot, types
 from aiogram.types import FSInputFile
 import yt_dlp
 
-from utils.common import COOKIES_PATH, ProgressLogger
+from utils.common import get_cookies_path, ProgressLogger
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -32,7 +32,7 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
             'outtmpl': '%(id)s.%(ext)s',
             'merge_output_format': 'mp4',
             'noplaylist': True,
-            'cookiefile': str(COOKIES_PATH),
+            'cookiefile': get_cookies_path(),
             'progress_hooks': [progress_logger.progress_hook],
         }
         
@@ -43,7 +43,6 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
             thumbnails = info.get('thumbnails', [])
             thumbnail_url = thumbnails[-1].get('url') if thumbnails else None
             
-            # Качаем обложку отдельно
             if thumbnail_url:
                 thumbnail_path = f"{video_id}.jpg"
                 response = requests.get(thumbnail_url)
@@ -51,7 +50,6 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
                     with open(thumbnail_path, 'wb') as f: f.write(response.content)
                 else: thumbnail_path = None
             
-            # Запускаем скачивание в отдельном потоке, чтобы не блочить Event Loop
             await loop.run_in_executor(None, lambda: ydl.download([video_url]))
             
             video_path = f"{video_id}.mp4"
@@ -65,14 +63,13 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
         thumbnail_input = FSInputFile(thumbnail_path) if thumbnail_path else None
         video_file = FSInputFile(video_path)
         
-        # Отправляем видео
         await bot.send_video(
             chat_id=callback.message.chat.id,
             video=video_file, 
             thumbnail=thumbnail_input, 
             supports_streaming=True, 
             caption=title,
-            request_timeout=3600  # Тайм-аут 1 час
+            request_timeout=3600
         )
         
         await callback.message.delete()
@@ -87,6 +84,5 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
         )
     
     finally:
-        # Уборка мусора
         if video_path and os.path.exists(video_path): os.remove(video_path)
         if thumbnail_path and os.path.exists(thumbnail_path): os.remove(thumbnail_path)

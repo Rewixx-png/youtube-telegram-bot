@@ -1,0 +1,26 @@
+# --- Version Control ---
+.git
+.gitignore
+
+# --- Secrets ---
+.env
+cookies.txt
+token.txt
+
+# --- Dependencies & Cache ---
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Generated/Heavy Data ---
+telegram-bot-api-data/
+certbot/
+nginx_conf/
+
+# --- Media Files ---
+*.mp4
+*.jpg
+*.png
+*.log

@@ -6,14 +6,13 @@ from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 import yt_dlp
 
-from utils.common import COOKIES_PATH, get_video_id, get_emoji_for_resolution, format_bytes
+from utils.common import get_cookies_path, get_video_id, get_emoji_for_resolution, format_bytes
 
 logger = logging.getLogger(__name__)
 router = Router()
 
 @router.message(F.text.contains("youtu"))
 async def get_video_formats_handler(message: types.Message):
-    # Извлекаем ID
     video_id = get_video_id(message.text)
     if not video_id:
         await message.answer("Не удалось извлечь ID видео из ссылки. Пожалуйста, отправьте корректную ссылку на YouTube.")
@@ -23,7 +22,8 @@ async def get_video_formats_handler(message: types.Message):
     status_message = await message.answer("Анализирую доступные форматы...")
     
     try:
-        ydl_opts = {'noplaylist': True, 'cookiefile': str(COOKIES_PATH)}
+        # Используем путь к кукам из settings (через хелпер)
+        ydl_opts = {'noplaylist': True, 'cookiefile': get_cookies_path()}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(clean_url, download=False)
             formats = info.get('formats', [])
@@ -31,7 +31,6 @@ async def get_video_formats_handler(message: types.Message):
         builder = InlineKeyboardBuilder()
         found_formats = False
         
-        # Сортируем форматы и выбираем только видео-потоки для мерджа
         for f in sorted(formats, key=lambda x: x.get('height') or 0, reverse=True):
             if f.get('vcodec') != 'none' and f.get('acodec') == 'none':
                 resolution, format_id = f.get('height'), f.get('format_id')

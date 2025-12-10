@@ -1,4 +1,5 @@
-# requirements.txt
 aiogram
 yt-dlp
 requests
+pydantic-settings
+python-dotenv
