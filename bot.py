@@ -14,6 +14,17 @@ from settings import settings
 
 logger = logging.getLogger(__name__)
 
+
+def build_api_base_url() -> str:
+    if settings.telegram_api_base_url:
+        return settings.telegram_api_base_url.rstrip("/")
+
+    if settings.api_domain:
+        domain = settings.api_domain.removeprefix("https://").removeprefix("http://").rstrip("/")
+        return f"https://{domain}"
+
+    raise ValueError("Set TELEGRAM_API_BASE_URL or API_DOMAIN in .env")
+
 async def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -23,11 +34,8 @@ async def main():
             logging.StreamHandler(sys.stdout)
         ]
     )
-    logger.info("Starting bot with Custom API Server...")
-
-    # Формируем URL к локальному серверу API (с SSL)
-    # settings.api_domain приходит из .env
-    server_url = f"https://{settings.api_domain}"
+    server_url = build_api_base_url()
+    logger.info("Starting bot with API base: %s", server_url)
     
     local_server = TelegramAPIServer.from_base(server_url)
     session = AiohttpSession(api=local_server)

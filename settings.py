@@ -9,9 +9,10 @@ class Settings(BaseSettings):
     # Telegram API Server
     telegram_api_id: str | int
     telegram_api_hash: str
+    telegram_api_base_url: str | None = None
     
     # Domain & SSL
-    api_domain: str
+    api_domain: str = ""
     admin_email: str = "admin@localhost"
     
     # Paths

@@ -33,6 +33,8 @@ async def download_video_callback_handler(callback: types.CallbackQuery, bot: Bo
             'merge_output_format': 'mp4',
             'noplaylist': True,
             'cookiefile': get_cookies_path(),
+            'js_runtimes': {'node': {}},
+            'remote_components': ['ejs:github'],
             'progress_hooks': [progress_logger.progress_hook],
             # Добавляем заголовки, чтобы YouTube не банил картинки
             'http_headers': {
