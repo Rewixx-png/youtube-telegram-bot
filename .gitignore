@@ -63,3 +63,9 @@ bot.log
 .vscode/
 .DS_Store
 Thumbs.db
+*.zip
+*.pth
+*.tar.gz
+*.rar
+*.db
+*.pth.tar
